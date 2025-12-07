@@ -1,0 +1,63 @@
+.detection-label {
+    position: fixed;
+    top: 120px;
+    right: 15%;
+    z-index: 500;
+    pointer-events: none;
+    animation: fadeInRight 0.5s ease-out;
+}
+
+.detection-panel {
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #00FFFF;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow:
+        0 0 20px rgba(0, 255, 255, 0.3),
+        0 0 40px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.detection-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #00FFFF;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.detection-confidence {
+    font-size: 16px;
+    color: #FFFFFF;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .detection-panel {
+        padding: 12px 24px;
+    }
+
+    .detection-title {
+        font-size: 20px;
+    }
+
+    .detection-confidence {
+        font-size: 14px;
+    }
+}
