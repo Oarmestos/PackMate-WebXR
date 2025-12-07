@@ -274,20 +274,6 @@ Add ?debug to URL
 - [x] Completion flow
 - [x] Keyboard controls
 
-### Version 1.1 (Next)
-- [ ] Real hand tracking gestures
-- [ ] Drag & drop with hands
-- [ ] Voice commands
-- [ ] Multiple suitcase support
-- [ ] Cloud sync
-- [ ] Custom packing lists
-
-### Version 2.0 (Future)
-- [ ] Real Scene Understanding API
-- [ ] Multi-user collaborative packing
-- [ ] Travel app integrations
-- [ ] Analytics dashboard
-- [ ] Offline mode
 
 ---
 
@@ -317,16 +303,7 @@ Created for **Meta Horizon Start Developer Competition 2025**
 
 ---
 
-## 📱 Screenshots
 
-### Desktop View
-![Desktop View](./screenshots/desktop.png)
-
-### VR View
-![VR View](./screenshots/vr.png)
-
-### Packing List
-![Packing List](./screenshots/list.png)
 
 ---
 
