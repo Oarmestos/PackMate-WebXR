@@ -1,18 +1,18 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, memo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
+import { selectPackedItems } from '../store/packingStore'
 import { usePackingStore } from '../store/packingStore'
-import * as THREE from 'three'
+import { POSITIONS, SIZES, COLORS, ANIMATION, TIMING } from '../config/constants'
 
+/**
+ * Renders packed items inside the suitcase
+ */
 function PackedItems() {
-    const items = usePackingStore(state => state.items)
-    const suitcasePosition = [0, 0.6, -2.5]
-    const suitcaseSize = [1.8, 1.2, 0.9]
-
-    const packedItems = items.filter(item => item.packed)
+    const packedItems = usePackingStore(selectPackedItems)
 
     return (
-        <group position={suitcasePosition}>
+        <group position={POSITIONS.SUITCASE}>
             {packedItems.map((item, index) => {
                 // Distribute items inside suitcase (3 columns, multiple rows)
                 const cols = 3
@@ -20,15 +20,15 @@ function PackedItems() {
                 const col = index % cols
 
                 // Position items INSIDE the suitcase
-                const x = (col - 1) * 0.45  // Spread horizontally
-                const y = -0.2 + row * 0.3  // Stack vertically INSIDE (not below)
+                const x = (col - 1) * 0.45
+                const y = -0.2 + row * 0.3
                 const z = 0
 
                 return (
                     <PackedItemCube
                         key={item.id}
                         position={[x, y, z]}
-                        itemName={item.name}
+                        item={item}
                         index={index}
                     />
                 )
@@ -37,53 +37,63 @@ function PackedItems() {
     )
 }
 
-function PackedItemCube({ position, itemName, index }) {
+/**
+ * Individual packed item cube with animation
+ * Memoized to prevent unnecessary re-renders
+ */
+const PackedItemCube = memo(function PackedItemCube({ position, item, index }) {
     const meshRef = useRef()
     const [appeared, setAppeared] = React.useState(false)
 
     useEffect(() => {
-        // Delay appearance for stagger effect
-        const timer = setTimeout(() => setAppeared(true), index * 100)
+        const timer = setTimeout(
+            () => setAppeared(true),
+            index * TIMING.ITEM_APPEAR_STAGGER_MS
+        )
         return () => clearTimeout(timer)
     }, [index])
 
     useFrame((state) => {
         if (meshRef.current && appeared) {
             // Gentle floating animation
-            meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2 + index) * 0.02
-            meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime + index) * 0.1
+            meshRef.current.position.y = position[1] +
+                Math.sin(state.clock.elapsedTime * ANIMATION.FLOAT_SPEED + index) * ANIMATION.FLOAT_AMPLITUDE
+            meshRef.current.rotation.y =
+                Math.sin(state.clock.elapsedTime + index) * ANIMATION.ROTATION_AMPLITUDE
         }
     })
 
     if (!appeared) return null
 
+    const cubeSize = SIZES.PACKED_ITEM_CUBE
+
     return (
         <group position={position}>
             <mesh ref={meshRef}>
-                <boxGeometry args={[0.25, 0.25, 0.25]} />
+                <boxGeometry args={[cubeSize, cubeSize, cubeSize]} />
                 <meshStandardMaterial
-                    color="#00FFFF"
-                    emissive="#00FFFF"
+                    color={COLORS.PRIMARY}
+                    emissive={COLORS.PRIMARY}
                     emissiveIntensity={0.5}
                     metalness={0.8}
                     roughness={0.2}
                 />
             </mesh>
 
-            {/* Label */}
+            {/* Icon or short label */}
             <Text
-                position={[0, 0.2, 0]}
+                position={[0, cubeSize * 0.8, 0]}
                 fontSize={0.06}
-                color="#FFFFFF"
+                color={COLORS.TEXT}
                 anchorX="center"
                 anchorY="bottom"
                 outlineWidth={0.005}
-                outlineColor="#000000"
+                outlineColor={COLORS.BACKGROUND}
             >
-                {itemName.substring(0, 4)}
+                {item.icon || item.name.substring(0, 4)}
             </Text>
         </group>
     )
-}
+})
 
 export default PackedItems
